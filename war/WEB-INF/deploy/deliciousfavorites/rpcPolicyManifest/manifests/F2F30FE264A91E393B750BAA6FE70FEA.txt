@@ -1,0 +1,2 @@
+serviceClass: com.mktneutral.client.DeliciousFavoriteService
+path: A12C034FC9E576EFFFBC41F33894619E.gwt.rpc
