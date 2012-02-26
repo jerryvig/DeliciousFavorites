@@ -32,3 +32,32 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+
+
+.headerCell {
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 14pt;
+  background-color: #007FFF;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.headerCell:hover {
+  color: #000000;
+}
+
+.evenRow {
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 10pt;
+  background-color: #F0F0F0;
+}
+
+.oddRow {
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 10pt;
+  background-color: #BCD4E6;
+}

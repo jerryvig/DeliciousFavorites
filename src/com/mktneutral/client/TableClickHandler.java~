@@ -1,0 +1,51 @@
+package com.mktneutral.client;
+
+import java.util.ArrayList;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.core.client.GWT;
+
+public class TableClickHandler implements ClickHandler {
+   private FlexTable flexTable;
+   private DeliciousFavoriteServiceAsync dfSvc;
+
+   TableClickHandler( FlexTable _ft ) {
+       flexTable = _ft;
+       dfSvc = GWT.create(DeliciousFavoriteService.class);
+   }
+
+   public void onClick( ClickEvent event ) {
+       HTMLTable.Cell clickedCell = flexTable.getCellForEvent( event );
+       if ( clickedCell.getRowIndex() == 0 ) {
+	  int columnIndex = clickedCell.getCellIndex();
+          switch(columnIndex) {
+	    case 0:
+	      sortByDescription();
+              break;
+	    case 1:
+	       sortByTags();
+               break;
+          }
+       }
+   }
+
+   public void sortByDescription() {
+     AsyncCallback<ArrayList<DeliciousFavorite>> callback = new AsyncCallback<ArrayList<DeliciousFavorite>>() {
+       public void onFailure( Throwable caught ) {
+	  Window.alert( caught.getMessage() );
+       }
+       public void onSuccess( ArrayList<DeliciousFavorite> favsList ) {
+	  DeliciousFavoritesHelpers.fillFlexTable( favsList );
+       }
+     };
+     dfSvc.getFavorites( "description", "asc", callback );
+   }
+
+   public void sortByTags() {
+   
+   } 
+}

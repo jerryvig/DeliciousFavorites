@@ -11,14 +11,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class DeliciousFavorites implements EntryPoint {
    //Widget definitions
    private VerticalPanel vertPanel = new VerticalPanel();
    private FlexTable flexTable = new FlexTable();
-
-   //Data definitions.
-   private ArrayList<DeliciousFavorite> favoritesList = new ArrayList();
 
    //Callback definitions
    private DeliciousFavoriteServiceAsync dfSvc = GWT.create(DeliciousFavoriteService.class);
@@ -26,18 +27,25 @@ public class DeliciousFavorites implements EntryPoint {
    public void onModuleLoad() {
        flexTable.setText(0,0,"Description");
        flexTable.setText(0,1,"Tags");
-       flexTable.setText(0,2,"URL");
-       flexTable.setText(0,3,"Shared");
-       flexTable.setText(0,4,"Private");
-       flexTable.setText(0,5,"Date Added");
-       for ( int i=0; i<6; i++ ) {
+       flexTable.setText(0,2,"Shared");
+       flexTable.setText(0,3,"Private");
+       flexTable.setText(0,4,"Date Added");
+       for ( int i=0; i<5; i++ ) {
 	  flexTable.getCellFormatter().addStyleName(0,i,"headerCell");
        }
-       flexTable.setWidth("75%");
-
+       flexTable.setWidth("100%");
+       flexTable.setCellSpacing(0);
+        
+       flexTable.addClickHandler( new TableClickHandler( flexTable ) );
        getFavoritesList();
-       
+
+       Button nextButton = new Button( "Next 30 >>", new NextButtonClickHandler( flexTable ) ); 
+       flexTable.setWidget(31,0,nextButton);
+       flexTable.getCellFormatter().addStyleName(31,0,"headerCell");
+       flexTable.getFlexCellFormatter().setColSpan(31,0,5);       
+
        vertPanel.add( flexTable );
+       vertPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
        RootPanel.get("mainPanel").add( vertPanel );              
    }
 
@@ -51,26 +59,9 @@ public class DeliciousFavorites implements EntryPoint {
           }
 
           public void onSuccess( ArrayList<DeliciousFavorite> favsList ) {
-	      for ( DeliciousFavorite fav : favsList ) {
-		  favoritesList.add( fav );
-              }
-              int i = 1;
-              for ( DeliciousFavorite fav : favoritesList ) {
-		 flexTable.setText( i, 0, fav.getDescription() );
-                 flexTable.setText( i, 1, fav.getTag() );
-                 Anchor href = new Anchor();
-                 href.setTarget("_blank");
-                 href.setHref( fav.getHref() );
-                 href.setText( fav.getHref() );
-                 flexTable.setWidget( i, 2, href );
-                 flexTable.setText( i, 3, fav.getShared() );
-                 flexTable.setText( i, 4, fav.getPrivate() );
-                 flexTable.setText( i, 5, fav.getTime() );
-		 i++;
-              }
+	     DeliciousFavoritesHelpers.fillFlexTable( flexTable, favsList );     
           }
       };
-      String[] args = { "dummyArg" };
-      dfSvc.getFavorites( args, callback );
+      dfSvc.getFavorites( "time", "desc", callback );
    } 
 }

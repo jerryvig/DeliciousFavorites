@@ -4,5 +4,5 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DeliciousFavoriteServiceAsync {
-    public void getFavorites( AsyncCallback<ArrayList<DeliciousFavorite>> callback );
+    void getFavorites( String[] args, AsyncCallback<ArrayList<DeliciousFavorite>> callback );
 }
