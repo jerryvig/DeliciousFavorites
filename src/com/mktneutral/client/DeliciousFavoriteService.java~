@@ -6,5 +6,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("deliciousFavorites")
 public interface DeliciousFavoriteService extends RemoteService {
-   ArrayList<DeliciousFavorite> getFavorites( String[] args );
+   ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection );
 }

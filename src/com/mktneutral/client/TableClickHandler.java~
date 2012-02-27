@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 public class TableClickHandler implements ClickHandler {
    private FlexTable flexTable;
    private DeliciousFavoriteServiceAsync dfSvc;
+   private String sortDirection = "desc";
 
    TableClickHandler( FlexTable _ft ) {
        flexTable = _ft;
@@ -24,28 +25,66 @@ public class TableClickHandler implements ClickHandler {
 	  int columnIndex = clickedCell.getCellIndex();
           switch(columnIndex) {
 	    case 0:
-	      sortByDescription();
+	      doSort( "description" );
               break;
 	    case 1:
-	       sortByTags();
+	       doSort( "tags" );
                break;
+	    case 2:
+	      doSort( "shared" );
+              break;
+	    case 3:
+	      doSort("private"); 
+              break;
+	    case 4 :
+              doSort("time");
+              break;
           }
        }
    }
 
-   public void sortByDescription() {
+   private void doSort( String sortColumn ) {
      AsyncCallback<ArrayList<DeliciousFavorite>> callback = new AsyncCallback<ArrayList<DeliciousFavorite>>() {
        public void onFailure( Throwable caught ) {
 	  Window.alert( caught.getMessage() );
        }
        public void onSuccess( ArrayList<DeliciousFavorite> favsList ) {
-	  DeliciousFavoritesHelpers.fillFlexTable( favsList );
+	   DeliciousFavoritesHelpers.fillFlexTable( flexTable, favsList );
        }
      };
-     dfSvc.getFavorites( "description", "asc", callback );
-   }
 
-   public void sortByTags() {
-   
-   } 
+     flexTable.setText(0,0,"Description");
+     flexTable.setText(0,1,"Tags");
+     flexTable.setText(0,2,"Shared");
+     flexTable.setText(0,3,"Private");
+     flexTable.setText(0,4,"Date Added");
+
+     String arrowString = "↑";
+     if ( sortDirection.equals("asc") ) {
+	 sortDirection = "desc";
+         arrowString = "↓"; 
+     }
+     else {
+         sortDirection = "asc";
+         arrowString = "↑";
+     }
+     
+     if ( sortColumn.equals("description") ) {
+	 flexTable.setText(0,0,"Description "+arrowString);
+     }
+     else if ( sortColumn.equals("tags") ) {
+          flexTable.setText(0,1,"Tags "+arrowString);
+     } 
+     else if ( sortColumn.equals("shared") ) {
+          flexTable.setText(0,2,"Shared "+arrowString);
+     }
+     else if ( sortColumn.equals("private") ) {
+          flexTable.setText(0,3,"Tags "+arrowString);
+     }
+     else if ( sortColumn.equals("time") ) {
+          flexTable.setText(0,4,"Date Added "+arrowString);
+     }
+
+     dfSvc.getFavorites( sortColumn, sortDirection, callback );
+   }
 }

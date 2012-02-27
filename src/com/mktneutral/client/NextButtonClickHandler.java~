@@ -14,7 +14,7 @@ public class NextButtonClickHandler implements ClickHandler {
    private DeliciousFavoriteServiceAsync dfSvc;
    private String sortDirection = "desc";
 
-   TableClickHandler( FlexTable _ft ) {
+   NextButtonClickHandler( FlexTable _ft ) {
        flexTable = _ft;
        dfSvc = GWT.create(DeliciousFavoriteService.class);
    }

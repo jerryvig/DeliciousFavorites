@@ -19,7 +19,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");   
    private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yyyy");
 
-   public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection ) {
+    public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
        DB db = null;
        try {
           db = (new Mongo("localhost")).getDB("delicious");
@@ -55,7 +55,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
           sortObj.put("time",sortDirectionInt);
        }
       
-       DBCursor cur = db.getCollection("posts").find( findObj ).sort( sortObj ).limit(30);
+       DBCursor cur = db.getCollection("posts").find( findObj ).sort( sortObj ).skip(startRow).limit(30);
 
        while ( cur.hasNext() ) {
 	  DBObject nextObj = cur.next();

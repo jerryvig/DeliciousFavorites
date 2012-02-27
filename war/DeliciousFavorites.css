@@ -33,8 +33,6 @@ h1 {
   margin: 15px 6px 6px;
 }
 
-
-
 .headerCell {
   font-family: "Arial";
   font-weight: 900;
@@ -47,6 +45,15 @@ h1 {
 .headerCell:hover {
   background-color: #FFFFFF;
   color: #007FFF;
+}
+
+.footerCell {
+  font-family: "Arial";
+  font-weight: 900;
+  font-size: 14pt;
+  background-color: #007FFF;
+  text-align: center;
+  color: #FFFFFF;
 }
 
 .evenRow {
@@ -64,10 +71,11 @@ h1 {
 }
 
 .deliButton {
-  background-color: #FFFFFF;
+  background-color: #D7DDE8;
   font-size: 14pt;
   font-weight: 900;
   font-family: "Arial";
   border: 1px solid;
+  border-color: #D7DDE8;
   color: #007FFF;
 }
