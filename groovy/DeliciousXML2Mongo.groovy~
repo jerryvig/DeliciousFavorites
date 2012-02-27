@@ -1,0 +1,31 @@
+import java.net.URL;
+import java.io.*
+import org.dom4j.io.*
+import com.mongodb.*
+
+def url = "https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all"
+def resp = url.openStream()
+def reader = new BufferedReader(new InputStreamReader(resp))
+
+while ( (def line = reader.readLine() != null ) {
+   println line
+}
+
+
+def db = (new Mongo("localhost")).getDB("delicious")
+db.getCollection("posts").drop()
+def postsColl = db.createCollection("posts",new BasicDBObject())
+def postCount = 0
+
+def document = (new SAXReader()).read( "file:///tmp/all.xml" )
+document.selectNodes("//post").each { post ->
+  def postObj = new BasicDBObject()
+  post.selectNodes("@*").each { attr ->
+    def attrName = attr.getName()
+    def attrValue = attr.getText()
+    postObj.put( attrName, attrValue )
+  }
+  postsColl.insert( postObj )
+  postCount++
+  // println postCount
+}
