@@ -36,8 +36,8 @@ h1 {
 
 
 .headerCell {
-  font-family: Arial;
-  font-weight: bold;
+  font-family: "Arial";
+  font-weight: 900;
   font-size: 14pt;
   background-color: #007FFF;
   text-align: center;
@@ -45,19 +45,29 @@ h1 {
 }
 
 .headerCell:hover {
-  color: #000000;
+  background-color: #FFFFFF;
+  color: #007FFF;
 }
 
 .evenRow {
-  font-family: Arial;
-  font-weight: bold;
+  font-family: "Arial";
+  font-weight: 900;
   font-size: 10pt;
   background-color: #F0F0F0;
 }
 
 .oddRow {
-  font-family: Arial;
-  font-weight: bold;
+  font-family: "Arial";
+  font-weight: 900;
   font-size: 10pt;
   background-color: #D7DDE8;
+}
+
+.deliButton {
+  background-color: #FFFFFF;
+  font-size: 14pt;
+  font-weight: 900;
+  font-family: "Arial";
+  border: 1px solid;
+  color: #007FFF;
 }

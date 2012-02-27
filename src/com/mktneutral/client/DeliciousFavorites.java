@@ -40,6 +40,7 @@ public class DeliciousFavorites implements EntryPoint {
        getFavoritesList();
 
        Button nextButton = new Button( "Next 30 >>", new NextButtonClickHandler( flexTable ) ); 
+       nextButton.addStyleName("deliButton");
        flexTable.setWidget(31,0,nextButton);
        flexTable.getCellFormatter().addStyleName(31,0,"headerCell");
        flexTable.getFlexCellFormatter().setColSpan(31,0,5);       

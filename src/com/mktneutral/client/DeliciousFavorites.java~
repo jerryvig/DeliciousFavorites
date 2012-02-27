@@ -12,6 +12,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class DeliciousFavorites implements EntryPoint {
    //Widget definitions
@@ -36,8 +39,11 @@ public class DeliciousFavorites implements EntryPoint {
        flexTable.addClickHandler( new TableClickHandler( flexTable ) );
        getFavoritesList();
 
-       flexTable
-       
+       Button nextButton = new Button( "Next 30 >>", new NextButtonClickHandler( flexTable ) ); 
+       flexTable.setWidget(31,0,nextButton);
+       flexTable.getCellFormatter().addStyleName(31,0,"headerCell");
+       flexTable.getFlexCellFormatter().setColSpan(31,0,5);       
+
        vertPanel.add( flexTable );
        vertPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
        RootPanel.get("mainPanel").add( vertPanel );              
