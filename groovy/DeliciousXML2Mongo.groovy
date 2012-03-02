@@ -6,8 +6,8 @@ import com.mongodb.*
 
 Authenticator.setDefault(new Authenticator() {
   PasswordAuthentication getPasswordAuthentication() {
-   def username = "agentq314"
-   def pass = "dk87nup4841"
+   def username = "###"
+   def pass = "###"
    return new PasswordAuthentication(username,pass.toCharArray())
   }
 });
