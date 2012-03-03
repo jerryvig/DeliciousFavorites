@@ -14,12 +14,62 @@ import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implements DeliciousFavoriteService {
    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");   
    private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yyyy");
 
-    public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
+   public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
+      try {
+	 Class.forName("org.h2.Driver");
+      } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
+
+      Connection conn = null;
+      Statement stmt = null;
+      try {
+	 conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/mem:delicious");
+         stmt = conn.createStatement();
+      } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
+
+      try {
+        ResultSet rs = stmt.executeQuery("SELECT * FROM posts ORDER BY time DESC");
+        while ( rs.next() ) {
+	   String desc = rs.getString(2);
+           String href = rs.getString(5);
+           String tag = rs.getString(8);
+           boolean shared = rs.getBoolean(7);
+           boolean pvt = rs.getBoolean(6);
+           String sharedString = "";
+           String pvtString = "";
+           if ( shared ) {
+	      sharedString = "yes";
+           }
+           else {
+              sharedString = "no";
+           }
+           if ( pvt ) {
+	       pvtString = "yes";
+           }
+           else {
+               pvtString = "no";
+           }
+
+           Date time = new Date( rs.getDate(9).getTime() );
+           favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
+        }
+      } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      return favoritesList;
+   }
+
+   public ArrayList<DeliciousFavorite> getFavoritesMongo( String sortColumn, String sortDirection, int startRow ) {
        DB db = null;
        try {
           db = (new Mongo("localhost")).getDB("delicious");
@@ -55,7 +105,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
           sortObj.put("time",sortDirectionInt);
        }
       
-       DBCursor cur = db.getCollection("posts").find( findObj ).sort( sortObj ).limit(30);
+       DBCursor cur = db.getCollection("posts").find( findObj ).sort( sortObj ).skip(startRow).limit(30);
 
        while ( cur.hasNext() ) {
 	  DBObject nextObj = cur.next();
