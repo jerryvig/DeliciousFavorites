@@ -46,13 +46,12 @@ public class StartH2Delicious {
 			String password = "dk87nup4841";
 			return new PasswordAuthentication(username,password.toCharArray());  
 		    }
-	    });
+		});
 
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection conn = (HttpsURLConnection)(url.openConnection());
 	    Document doc = (new SAXReader()).read( conn.getInputStream() );
-	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
-            String insertString = "INSERT INTO posts ( description, extended, hash, href, private, shared, tag, time ) VALUES ";
+	    List<Node> posts = (List<Node>)doc.selectNodes("//post");        
 
 	    for ( Node post : posts ) {
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
@@ -106,12 +105,12 @@ public class StartH2Delicious {
 		    }
 		}
  
-	        insertString += "( '"+description+"', '"+extended+"', '"+hash+"', '"+href+"', "+pvt+", "+shared+", '"+tag+"', '"+time.substring(0,10)+"'),";
+		try {
+		    stmt.executeUpdate("INSERT INTO posts ( description, extended, hash, href, private, shared, tag, time ) VALUES ( '"+description+"', '"+extended+"', '"+hash+"', '"+href+"', "+pvt+", "+shared+", '"+tag+"', '"+time.substring(0,10)+"')");
+		} catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	    }
        
 	    try {
-                insertString = insertString.substring(0,insertString.length()-1);
-                stmt.executeUpdate( insertString );
 		stmt.executeUpdate("CREATE SEQUENCE posts_seq INCREMENT BY 1"); 
 		stmt.executeUpdate("UPDATE posts set posts_id=posts_seq.nextval");
 
