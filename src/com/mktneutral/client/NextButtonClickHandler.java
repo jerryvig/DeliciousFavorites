@@ -49,21 +49,18 @@ public class NextButtonClickHandler implements ClickHandler {
 		Window.alert("You clicked the back button");  
             }  
 	 });
-         Button nextButton = new Button("Next 30 >>", new ClickHandler() {
-	    public void onClick( ClickEvent event ) {
-                Window.alert("You clicked the next button");
-            }     
-	 });
+         Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
          prevButton.addStyleName("deliButton");
          nextButton.addStyleName("deliButton");
          HorizontalPanel hPanel = new HorizontalPanel();
-         hPanel.setSpacing(5);
+         hPanel.setSpacing(0);
          hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
+         hPanel.setWidth("100%");
          hPanel.add( prevButton );
          hPanel.add( nextButton );
 
-         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
          flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
+         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
          flexTable.setWidget(32,0, hPanel );
            
      }
