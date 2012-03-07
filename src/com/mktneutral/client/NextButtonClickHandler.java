@@ -13,6 +13,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.dom.client.DivElement;
 
 public class NextButtonClickHandler implements ClickHandler {
    private FlexTable flexTable;
@@ -60,10 +61,11 @@ public class NextButtonClickHandler implements ClickHandler {
          hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
          hPanel.add( prevButton );
          hPanel.add( nextButton );
- 
 
-         flexTable.setWidget(32,0,hPanel);
-         flexTable.getFlexCellFormatter().setAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
+         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
+         flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
+         flexTable.setWidget(32,0, hPanel );
+           
      }
 
      dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
