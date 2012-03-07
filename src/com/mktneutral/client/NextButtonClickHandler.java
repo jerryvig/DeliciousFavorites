@@ -10,6 +10,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 public class NextButtonClickHandler implements ClickHandler {
    private FlexTable flexTable;
@@ -42,11 +45,25 @@ public class NextButtonClickHandler implements ClickHandler {
      if ( query.getStartRow() > 0 ) {
 	 Button prevButton = new Button("<< Prev 30", new ClickHandler() {
 	    public void onClick( ClickEvent event ) {
-		Window.alert( "You clicked the back button" );  
+		Window.alert("You clicked the back button");  
             }  
 	 });
+         Button nextButton = new Button("Next 30 >>", new ClickHandler() {
+	    public void onClick( ClickEvent event ) {
+                Window.alert("You clicked the next button");
+            }     
+	 });
          prevButton.addStyleName("deliButton");
-         flexTable.setWidget(32,0,prevButton);
+         nextButton.addStyleName("deliButton");
+         HorizontalPanel hPanel = new HorizontalPanel();
+         hPanel.setSpacing(5);
+         hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
+         hPanel.add( prevButton );
+         hPanel.add( nextButton );
+ 
+
+         flexTable.setWidget(32,0,hPanel);
+         flexTable.getFlexCellFormatter().setAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
      }
 
      dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    

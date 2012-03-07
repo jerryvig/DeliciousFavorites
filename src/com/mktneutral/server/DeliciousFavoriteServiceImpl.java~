@@ -32,14 +32,31 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       Connection conn = null;
       Statement stmt = null;
       try {
-	 conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/mem:delicious");
+	  conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/mem:delicious","sa","");
          stmt = conn.createStatement();
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      String orderBy = "time";
+      if ( sortColumn.equals("description") ) {
+	  orderBy = "description";
+      }
+      else if ( sortColumn.equals("tags") ) {
+          orderBy = "tag";
+      }
+      else if ( sortColumn.equals("shared") ) {
+          orderBy = "shared";
+      }
+      else if ( sortColumn.equals("private") ) {
+          orderBy = "private";
+      }
+      else if ( sortColumn.equals("time") ) {
+          orderBy = "time";
+      }
 
       ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
 
       try {
-        ResultSet rs = stmt.executeQuery("SELECT * FROM posts ORDER BY time DESC");
+	ResultSet rs = stmt.executeQuery("SELECT * FROM posts ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30");
         while ( rs.next() ) {
 	   String desc = rs.getString(2);
            String href = rs.getString(5);

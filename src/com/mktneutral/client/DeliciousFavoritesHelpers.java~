@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Anchor;
 
 public class DeliciousFavoritesHelpers {
    public static void fillFlexTable( FlexTable flexTable, ArrayList<DeliciousFavorite> favsList ) {
-       int i = 1;
+       int i = 2;
        for ( DeliciousFavorite fav : favsList ) {
            Anchor href = new Anchor();
            href.setTarget("_blank");
