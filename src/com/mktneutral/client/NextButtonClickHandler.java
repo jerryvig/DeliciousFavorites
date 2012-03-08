@@ -44,12 +44,9 @@ public class NextButtonClickHandler implements ClickHandler {
     
      query.setStartRow( query.getStartRow()+30 );
      if ( query.getStartRow() > 0 ) {
-	 Button prevButton = new Button("<< Prev 30", new ClickHandler() {
-	    public void onClick( ClickEvent event ) {
-		Window.alert("You clicked the back button");  
-            }  
-	 });
+	 Button prevButton = new Button("<< Prev 30", new PrevButtonClickHandler( flexTable, query ));
          Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
+
          prevButton.addStyleName("deliButton");
          nextButton.addStyleName("deliButton");
          HorizontalPanel hPanel = new HorizontalPanel();
@@ -61,8 +58,20 @@ public class NextButtonClickHandler implements ClickHandler {
 
          flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
          flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
-         flexTable.setWidget(32,0, hPanel );
-           
+         flexTable.setWidget(32,0, hPanel );           
+     }
+     else {
+         Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
+         nextButton.addStyleName("deliButton");
+         HorizontalPanel hPanel = new HorizontalPanel();
+         hPanel.setSpacing(0);
+         hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
+         hPanel.setWidth("100%");
+         hPanel.add( nextButton );
+
+         flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
+         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
+         flexTable.setWidget(32,0, hPanel ); 
      }
 
      dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
