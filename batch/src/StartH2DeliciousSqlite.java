@@ -22,7 +22,7 @@ public class StartH2DeliciousSqlite {
     public static void main( String[] args ) {
        startDB();
        deliciousXML2H2();
-       //startServer();
+       stopDB();
     }
 
     public static void startDB() {
@@ -31,7 +31,7 @@ public class StartH2DeliciousSqlite {
 	} catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
 	try {
-	    conn = DriverManager.getConnection("jdbc:sqlite:delicious.db");
+	    conn = DriverManager.getConnection("jdbc:sqlite:/mnt/ramdisk/delicious.db");
 	    stmt = conn.createStatement();
             stmt.executeUpdate("DROP TABLE IF EXISTS posts");
 	    stmt.executeUpdate("CREATE TABLE posts ( description TEXT, extended TEXT, hash TEXT, href TEXT, private INTEGER, shared INTEGER, tag TEXT, time TEXT )");
@@ -51,8 +51,7 @@ public class StartH2DeliciousSqlite {
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection conn = (HttpsURLConnection)(url.openConnection());
 	    Document doc = (new SAXReader()).read( conn.getInputStream() );
-	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
-           
+	    List<Node> posts = (List<Node>)doc.selectNodes("//post");          
 
 	    for ( Node post : posts ) {
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
@@ -89,7 +88,7 @@ public class StartH2DeliciousSqlite {
 			if ( attribute.getText().equals("yes") ) {
 			    shared = "1";
 			}
-			if ( attribute.getText().equals("no") ) {
+			else if ( attribute.getText().equals("no") ) {
 			    shared = "0";
 			}
 		    }
@@ -97,7 +96,7 @@ public class StartH2DeliciousSqlite {
 			if ( attribute.getText().equals("yes") ) {
 			    pvt = "1";
 			}
-			if ( attribute.getText().equals("no") ) {
+			else if ( attribute.getText().equals("no") ) {
 			    pvt = "0";
 			}
 		    }
