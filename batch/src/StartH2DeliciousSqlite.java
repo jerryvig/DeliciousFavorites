@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.net.ssl.HttpsURLConnection;
@@ -18,6 +19,7 @@ import org.dom4j.Node;
 public class StartH2DeliciousSqlite {
     private static Connection conn;
     private static Statement stmt;
+    private static PreparedStatement prepStmt;
 
     public static void main( String[] args ) {
        startDB();
@@ -49,9 +51,12 @@ public class StartH2DeliciousSqlite {
 	    });
 
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
-	    HttpsURLConnection conn = (HttpsURLConnection)(url.openConnection());
-	    Document doc = (new SAXReader()).read( conn.getInputStream() );
-	    List<Node> posts = (List<Node>)doc.selectNodes("//post");          
+	    HttpsURLConnection urlConn = (HttpsURLConnection)(url.openConnection());
+	    Document doc = (new SAXReader()).read( urlConn.getInputStream() );
+	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
+            try {          
+              prepStmt = conn.prepareStatement("INSERT INTO posts VALUES (?,?,?,?,?,?,?,?)"); 
+            } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
 	    for ( Node post : posts ) {
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
@@ -60,8 +65,8 @@ public class StartH2DeliciousSqlite {
 		String extended = "";
 		String hash = "";
 		String tag = "";
-		String shared = "";
-		String pvt = "";
+		int shared = 0;
+		int pvt = 0;
 		String time = "";
 
 		for ( Node attribute : attributes ) {
@@ -86,18 +91,18 @@ public class StartH2DeliciousSqlite {
 		    }
 		    if ( attributeName.equals("shared") ) {
 			if ( attribute.getText().equals("yes") ) {
-			    shared = "1";
+			    shared = 1;
 			}
 			else if ( attribute.getText().equals("no") ) {
-			    shared = "0";
+			    shared = 0;
 			}
 		    }
 		    if ( attributeName.equals("private") ) {
 			if ( attribute.getText().equals("yes") ) {
-			    pvt = "1";
+			    pvt = 1;
 			}
 			else if ( attribute.getText().equals("no") ) {
-			    pvt = "0";
+			    pvt = 0;
 			}
 		    }
 		    if ( attributeName.equals("time") ) {
@@ -106,13 +111,29 @@ public class StartH2DeliciousSqlite {
 		}
  
                 try {
-                  stmt.executeUpdate( "INSERT INTO posts ( description, extended, hash, href, private, shared, tag, time ) VALUES ( '"+description+"', '"+extended+"', '"+hash+"', '"+href+"', "+pvt+", "+shared+", '"+tag+"', '"+time.substring(0,10)+"')" );
+                  prepStmt.setString(1,description);
+                  prepStmt.setString(2,extended);
+                  prepStmt.setString(3,hash);
+                  prepStmt.setString(4,href);
+                  prepStmt.setInt(5,pvt);
+                  prepStmt.setInt(6,shared);
+                  prepStmt.setString(7,tag);
+                  prepStmt.setString(8,time.substring(0,10));
+                  prepStmt.addBatch();
                 } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	    }
        
 	    try {
-		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts ( tag )");
-		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts ( time )");
+                conn.setAutoCommit(false);
+                prepStmt.executeBatch();
+                conn.setAutoCommit(true);
+
+		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts (tag)");
+		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts (time)");
+                stmt.executeUpdate("CREATE INDEX posts_desc_idx ON posts (description)");
+                stmt.executeUpdate("CREATE INDEX posts_ext_idx ON posts (extended)");
+                stmt.executeUpdate("CREATE INDEX posts_private_idx ON posts (private)");
+                stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts (shared)");
 	    } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	} catch ( IOException ioe ) { ioe.printStackTrace(); }
 	catch ( DocumentException doce ) { doce.printStackTrace(); }

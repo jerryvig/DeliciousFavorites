@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.h2.tools.Server;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -23,18 +22,19 @@ public class StartH2DeliciousSqlite {
     public static void main( String[] args ) {
        startDB();
        deliciousXML2H2();
-       startServer();
+       stopDB();
     }
 
     public static void startDB() {
 	try {
-	    Class.forName("org.h2.Driver");
+	    Class.forName("org.sqlite.JDBC");
 	} catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
 	try {
-	    conn = DriverManager.getConnection("jdbc:h2:mem:delicious","sa","");
+	    conn = DriverManager.getConnection("jdbc:sqlite:/mnt/ramdisk/delicious.db");
 	    stmt = conn.createStatement();
-	    stmt.executeUpdate("CREATE TABLE posts ( posts_id INTEGER, description VARCHAR(2048), extended VARCHAR(4096), hash VARCHAR(2048), href VARCHAR(2048), private BOOLEAN, shared BOOLEAN, tag VARCHAR(2048), time DATE )");
+            stmt.executeUpdate("DROP TABLE IF EXISTS posts");
+	    stmt.executeUpdate("CREATE TABLE posts ( description TEXT, extended TEXT, hash TEXT, href TEXT, private INTEGER, shared INTEGER, tag TEXT, time TEXT )");
 	} catch ( SQLException sqle ) { sqle.printStackTrace(); }
     }
 
@@ -44,21 +44,20 @@ public class StartH2DeliciousSqlite {
 		    public PasswordAuthentication getPasswordAuthentication() {
 			String username = "agentq314";
 			String password = "dk87nup4841";
-			return new PasswordAuthentication(username,password.toCharArray());  
+			return new PasswordAuthentication(username,password.toCharArray());
 		    }
 	    });
 
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection conn = (HttpsURLConnection)(url.openConnection());
 	    Document doc = (new SAXReader()).read( conn.getInputStream() );
-	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
-            String insertString = "INSERT INTO posts ( description, extended, hash, href, private, shared, tag, time ) VALUES ";
+	    List<Node> posts = (List<Node>)doc.selectNodes("//post");          
 
 	    for ( Node post : posts ) {
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
 		String description = ""; 
 		String href = "";
-		String extended = "";            
+		String extended = "";
 		String hash = "";
 		String tag = "";
 		String shared = "";
@@ -87,18 +86,18 @@ public class StartH2DeliciousSqlite {
 		    }
 		    if ( attributeName.equals("shared") ) {
 			if ( attribute.getText().equals("yes") ) {
-			    shared = "true";
+			    shared = "1";
 			}
-			if ( attribute.getText().equals("no") ) {
-			    shared = "false";
+			else if ( attribute.getText().equals("no") ) {
+			    shared = "0";
 			}
 		    }
 		    if ( attributeName.equals("private") ) {
 			if ( attribute.getText().equals("yes") ) {
-			    pvt = "true";
+			    pvt = "1";
 			}
-			if ( attribute.getText().equals("no") ) {
-			    pvt = "false";
+			else if ( attribute.getText().equals("no") ) {
+			    pvt = "0";
 			}
 		    }
 		    if ( attributeName.equals("time") ) {
@@ -106,25 +105,24 @@ public class StartH2DeliciousSqlite {
 		    }
 		}
  
-	        insertString += "( '"+description+"', '"+extended+"', '"+hash+"', '"+href+"', "+pvt+", "+shared+", '"+tag+"', '"+time.substring(0,10)+"'),";
+                try {
+                  stmt.executeUpdate( "INSERT INTO posts ( description, extended, hash, href, private, shared, tag, time ) VALUES ( '"+description+"', '"+extended+"', '"+hash+"', '"+href+"', "+pvt+", "+shared+", '"+tag+"', '"+time.substring(0,10)+"')" );
+                } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	    }
        
 	    try {
-                insertString = insertString.substring(0,insertString.length()-1);
-                stmt.executeUpdate( insertString );
-		stmt.executeUpdate("CREATE SEQUENCE posts_seq INCREMENT BY 1"); 
-		stmt.executeUpdate("UPDATE posts set posts_id=posts_seq.nextval");
-
 		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts ( tag )");
 		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts ( time )");
 	    } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	} catch ( IOException ioe ) { ioe.printStackTrace(); }
 	catch ( DocumentException doce ) { doce.printStackTrace(); }
     }
-
-    public static void startServer() {
-	try {
-	    Server server = Server.createTcpServer().start();
-	} catch ( SQLException sqle ) { sqle.printStackTrace(); }
+ 
+    public static void stopDB() {
+      try {
+	  conn.close();
+      } catch ( SQLException sqle ) {
+	  sqle.printStackTrace(); 
+      }
     }
 }

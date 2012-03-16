@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implements DeliciousFavoriteService {
    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");   
-   private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yyyy");
+   private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yy");
 
    public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
       try {
@@ -81,8 +81,10 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
            }
 
            //Date time = new Date( rs.getDate(9).getTime() );
-           String time = rs.getString(8);
-           favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, time ) );
+           try {
+             Date time = dateFormatter.parse(rs.getString(8));
+             favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
+	   } catch ( ParseException pe ) { pe.printStackTrace(); }
         }
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
