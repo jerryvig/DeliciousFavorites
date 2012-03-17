@@ -36,7 +36,7 @@ public class StartH2DeliciousSqlite {
 	    conn = DriverManager.getConnection("jdbc:sqlite:/mnt/ramdisk/delicious.db");
 	    stmt = conn.createStatement();
             stmt.executeUpdate("DROP TABLE IF EXISTS posts");
-	    stmt.executeUpdate("CREATE TABLE posts ( description TEXT, extended TEXT, hash TEXT, href TEXT, private INTEGER, shared INTEGER, tag TEXT, time TEXT )");
+	    stmt.executeUpdate("CREATE TABLE posts (description TEXT,extended TEXT,hash TEXT,href TEXT,private INTEGER,shared INTEGER,tag TEXT,time TEXT)");
 	} catch ( SQLException sqle ) { sqle.printStackTrace(); }
     }
 
@@ -128,12 +128,12 @@ public class StartH2DeliciousSqlite {
                 prepStmt.executeBatch();
                 conn.setAutoCommit(true);
 
-		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts (tag)");
-		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts (time)");
-                stmt.executeUpdate("CREATE INDEX posts_desc_idx ON posts (description)");
-                stmt.executeUpdate("CREATE INDEX posts_ext_idx ON posts (extended)");
-                stmt.executeUpdate("CREATE INDEX posts_private_idx ON posts (private)");
-                stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts (shared)");
+		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts(tag)");
+		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts(time)");
+                stmt.executeUpdate("CREATE INDEX posts_desc_idx ON posts(description)");
+                stmt.executeUpdate("CREATE INDEX posts_ext_idx ON posts(extended)");
+                stmt.executeUpdate("CREATE INDEX posts_private_idx ON posts(private)");
+                stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts(shared)");
 	    } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	} catch ( IOException ioe ) { ioe.printStackTrace(); }
 	catch ( DocumentException doce ) { doce.printStackTrace(); }
