@@ -20,6 +20,7 @@ public class StartH2DeliciousSqlite {
     private static Connection conn;
     private static Statement stmt;
     private static PreparedStatement prepStmt;
+    private static PreparedStatement virtStmt;
 
     public static void main( String[] args ) {
        startDB();
@@ -29,7 +30,7 @@ public class StartH2DeliciousSqlite {
 
     public static void startDB() {
 	try {
-	    Class.forName("org.sqlite.JDBC");
+	   Class.forName("org.sqlite.JDBC");
 	} catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
 	try {
@@ -37,6 +38,8 @@ public class StartH2DeliciousSqlite {
 	    stmt = conn.createStatement();
             stmt.executeUpdate("DROP TABLE IF EXISTS posts");
 	    stmt.executeUpdate("CREATE TABLE posts (description TEXT,extended TEXT,hash TEXT,href TEXT,private INTEGER,shared INTEGER,tag TEXT,time TEXT)");
+            stmt.executeUpdate("DROP TABLE IF EXISTS posts_fts3");
+            stmt.executeUpdate("CREATE VIRTUAL TABLE posts_fts3 USING fts3( description TEXT, extended TEXT, href TEXT, tag TEXT )");
 	} catch ( SQLException sqle ) { sqle.printStackTrace(); }
     }
 
@@ -55,7 +58,10 @@ public class StartH2DeliciousSqlite {
 	    Document doc = (new SAXReader()).read( urlConn.getInputStream() );
 	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
             try {          
-              prepStmt = conn.prepareStatement("INSERT INTO posts VALUES (?,?,?,?,?,?,?,?)"); 
+              prepStmt = conn.prepareStatement("INSERT INTO posts VALUES(?,?,?,?,?,?,?,?)"); 
+            } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+            try {
+	      virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
 	    for ( Node post : posts ) {
@@ -120,12 +126,19 @@ public class StartH2DeliciousSqlite {
                   prepStmt.setString(7,tag);
                   prepStmt.setString(8,time.substring(0,10));
                   prepStmt.addBatch();
+
+                  virtStmt.setString(1,description);
+                  virtStmt.setString(2,extended);
+                  virtStmt.setString(3,href);
+                  virtStmt.setString(4,tag);
+                  virtStmt.addBatch();
                 } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	    }
        
 	    try {
                 conn.setAutoCommit(false);
                 prepStmt.executeBatch();
+                virtStmt.executeBatch();
                 conn.setAutoCommit(true);
 
 		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts(tag)");
