@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,6 +16,9 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Callable;
 
 public class StartH2DeliciousSqlite {
     private static Connection conn;
@@ -64,7 +68,13 @@ public class StartH2DeliciousSqlite {
 	      virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
+            ExecutorService execSvc = Executors.newFixedThreadPool(4);
+            ArrayList<Callable<Object>> tasks = new ArrayList();            
+
 	    for ( Node post : posts ) {
+
+                tasks.add( Executors.callable( new DeliciousPostProcessor(post) ) );
+
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
 		String description = ""; 
 		String href = "";
@@ -74,6 +84,8 @@ public class StartH2DeliciousSqlite {
 		int shared = 0;
 		int pvt = 0;
 		String time = "";
+
+                
 
 		for ( Node attribute : attributes ) {
 		    String attributeName = attribute.getName();           
