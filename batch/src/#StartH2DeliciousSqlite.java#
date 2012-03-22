@@ -72,7 +72,6 @@ public class StartH2DeliciousSqlite {
             final ArrayList<Callable<Object>> tasks = new ArrayList();            
 
 	    for ( Node post : posts ) {
-
                 tasks.add( Executors.callable( new DeliciousPostProcessor(post) ) );
 
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
