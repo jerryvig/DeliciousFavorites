@@ -89,16 +89,23 @@ public class StartH2DeliciousSqlite {
             int[] startIndices = new int[1001];
             int[] endIndices = new int[1001];
             int postCount = 0;            
+            String postString = "";
+            boolean addToPostString = false;
 
             for ( int i=0; i<content.length()-5; i++ ) {
 	       if ( content.substring(i,i+5).equals("<post") ) {
 		   startIndices[postCount] = i;
+                   addToPostString = true;
                }
                if ( content.substring(i,i+2).equals("/>") ) {
                    endIndices[postCount] = i+2;
-                   String postString = content.substring(startIndices[postCount],endIndices[postCount]);
+                   //String postStr = content.substring(startIndices[postCount],endIndices[postCount]);
                    nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postString, iStmt, virtStmt)));
+                   addToPostString = false;
                    postCount++;
+               }
+               if ( addToPostString ) {
+		   postString += content.substring(i,i+1);
                }
             }
 

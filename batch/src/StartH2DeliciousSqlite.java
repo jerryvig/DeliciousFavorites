@@ -99,14 +99,15 @@ public class StartH2DeliciousSqlite {
                }
                if ( content.substring(i,i+2).equals("/>") ) {
                    endIndices[postCount] = i+2;
-                   //String postStr = content.substring(startIndices[postCount],endIndices[postCount]);
-                   nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postString, iStmt, virtStmt)));
+                   String postStr = content.substring(startIndices[postCount],endIndices[postCount]);
+                   nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postStr, iStmt, virtStmt)));
                    addToPostString = false;
+                   postString = "";
                    postCount++;
                }
                if ( addToPostString ) {
 		   postString += content.substring(i,i+1);
-               }
+	       }
             }
 
             //System.out.println( content );
