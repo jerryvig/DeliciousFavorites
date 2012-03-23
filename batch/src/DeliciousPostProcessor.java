@@ -4,79 +4,63 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DeliciousPostProcessor implements Runnable {
-   private Node post;
+   private String postString;
    private static PreparedStatement iStmt;
    private static PreparedStatement virtStmt;
 
-   DeliciousPostProcessor( Node _post, PreparedStatement _iStmt, PreparedStatement _virtStmt ) {
+   DeliciousPostProcessor( String _postString, PreparedStatement _iStmt, PreparedStatement _virtStmt ) {
       iStmt = _iStmt;
       virtStmt = _virtStmt;
-      post = _post;     
+      postString = _postString;     
    }
 
    public void run() {
-      List<Node> attributes = (List<Node>)(this.post.selectNodes("@*"));
-
-      String description = "";
-      String href = "";
-      String extended = "";
-      String hash = "";
-      String tag = "";
+       //String description = "";
+       //String href = "";
+       //String extended = "";
+       //String hash = "";
+       //String tag = "";
       int shared = 0;
       int pvt = 0;
-      String time = "";
+      //String time = "";
 
-      for ( Node attribute : attributes ) {
-	   String attributeName = attribute.getName();
-	   if ( attributeName.equals("description") ) {
-	       description = attribute.getText();
-	       description = description.replaceAll("'","");
-	   }
-	   if ( attributeName.equals("href") ) {
-	       href = attribute.getText();
-	   }
-	   if ( attributeName.equals("extended") ) {
-	       extended = attribute.getText();
-	       extended = extended.replaceAll("'","");
-	   }
-	   if ( attributeName.equals("hash") ) {
-	       hash = attribute.getText();
-	   }
-	   if ( attributeName.equals("tag") ) {
-	       tag = attribute.getText();
-	       tag = tag.replaceAll("'","");
-	   }
-	   if ( attributeName.equals("shared") ) {
-	       if ( attribute.getText().equals("yes") ) {
-		   shared = 1;
-	       }
-	   }
-	   if ( attributeName.equals("private") ) {
-	       if ( attribute.getText().equals("yes") ) {
-		   pvt = 1;
-	       }
-	   }
-	   if ( attributeName.equals("time") ) {
-	       time = attribute.getText();
-	   }
-       }
+      try {
+      String[] pieces = this.postString.split("=\"");
+      for ( int i=0; i<pieces.length; i++ ) {
+	 if ( pieces[i].endsWith("description") ) {
+	    iStmt.setString(1,pieces[i+1].split("\"")[0]);
+            virtStmt.setString(1,pieces[i+1].split("\"")[0]);
+         }
+         else if ( pieces[i].endsWith("href") ) {
+	    iStmt.setString(4,pieces[i+1].split("\"")[0]);
+            virtStmt.setString(3,pieces[i+1].split("\"")[0]);
+         }
+         else if ( pieces[i].endsWith("extended") ) {
+	   iStmt.setString(2,pieces[i+1].split("\"")[0]);
+           virtStmt.setString(2,pieces[i+1].split("\"")[0]);
+         }
+         else if ( pieces[i].endsWith("hash") ) {
+	     iStmt.setString(3,pieces[i+1].split("\"")[0]);
+         }
+         else if ( pieces[i].endsWith("tag") ) {
+	     iStmt.setString(7,pieces[i+1].split("\"")[0]);
+             virtStmt.setString(4,pieces[i+1].split("\"")[0]);
+         }
+         else if ( pieces[i].endsWith("shared") ) {
+	   if ( pieces[i+1].split("\"")[0].equals("yes") ) shared = 1;
+         }
+         else if ( pieces[i].endsWith("private") ) {
+	   if ( pieces[i+1].split("\"")[0].equals("yes") ) pvt = 1;
+         }
+         else if ( pieces[i].endsWith("time") ) {
+	   iStmt.setString(8,pieces[i+1].split("\"")[0]);
+         }
+      }
 
-       try {
-         iStmt.setString(1,description);
-	 iStmt.setString(2,extended);
-	 iStmt.setString(3,hash);
-	 iStmt.setString(4,href);
-	 iStmt.setInt(5,pvt);
-	 iStmt.setInt(6,shared);
-	 iStmt.setString(7,tag);
-	 iStmt.setString(8,time.substring(0,10));
-	 iStmt.addBatch();
-
-         virtStmt.setString(1,description);
-	 virtStmt.setString(2,extended);
-	 virtStmt.setString(3,href);
-	 virtStmt.setString(4,tag);
-	 virtStmt.addBatch();
-       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+      iStmt.setInt(5,pvt);
+      iStmt.setInt(6,shared);
+      iStmt.addBatch();
+      virtStmt.addBatch();
+     } catch ( SQLException sqle ) { sqle.printStackTrace(); }
    }
 }
