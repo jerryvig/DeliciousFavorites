@@ -3,27 +3,30 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public final class DeliciousPostProcessor implements Runnable {
-   private static Node post;
-   private static PreparedStatement prepStmt;
+public class DeliciousPostProcessor implements Runnable {
+   private Node post;
+   private static PreparedStatement iStmt;
+   private static PreparedStatement virtStmt;
 
-   DeliciousPostProcessor( Node _post ) {
-       post = _post;   
+   DeliciousPostProcessor( Node _post, PreparedStatement _iStmt, PreparedStatement _virtStmt ) {
+      iStmt = _iStmt;
+      virtStmt = _virtStmt;
+      post = _post;     
    }
 
-    public void run() {
-       List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
+   public void run() {
+      List<Node> attributes = (List<Node>)(this.post.selectNodes("@*"));
 
-       String description = "";
-       String href = "";
-       String extended = "";
-       String hash = "";
-       String tag = "";
-       int shared = 0;
-       int pvt = 0;
-       String time = "";
+      String description = "";
+      String href = "";
+      String extended = "";
+      String hash = "";
+      String tag = "";
+      int shared = 0;
+      int pvt = 0;
+      String time = "";
 
-       for ( Node attribute : attributes ) {
+      for ( Node attribute : attributes ) {
 	   String attributeName = attribute.getName();
 	   if ( attributeName.equals("description") ) {
 	       description = attribute.getText();
@@ -47,16 +50,10 @@ public final class DeliciousPostProcessor implements Runnable {
 	       if ( attribute.getText().equals("yes") ) {
 		   shared = 1;
 	       }
-	       else if ( attribute.getText().equals("no") ) {
-		   shared = 0;
-	       }
 	   }
 	   if ( attributeName.equals("private") ) {
 	       if ( attribute.getText().equals("yes") ) {
 		   pvt = 1;
-	       }
-	       else if ( attribute.getText().equals("no") ) {
-		   pvt = 0;
 	       }
 	   }
 	   if ( attributeName.equals("time") ) {
@@ -65,16 +62,21 @@ public final class DeliciousPostProcessor implements Runnable {
        }
 
        try {
-          prepStmt.setString(1,description);
-	  prepStmt.setString(2,extended);
-	  prepStmt.setString(3,hash);
-	  prepStmt.setString(4,href);
-	  prepStmt.setInt(5,pvt);
-	  prepStmt.setInt(6,shared);
-	  prepStmt.setString(7,tag);
-	  prepStmt.setString(8,time.substring(0,10));
-	  prepStmt.addBatch();
+         iStmt.setString(1,description);
+	 iStmt.setString(2,extended);
+	 iStmt.setString(3,hash);
+	 iStmt.setString(4,href);
+	 iStmt.setInt(5,pvt);
+	 iStmt.setInt(6,shared);
+	 iStmt.setString(7,tag);
+	 iStmt.setString(8,time.substring(0,10));
+	 iStmt.addBatch();
 
+         virtStmt.setString(1,description);
+	 virtStmt.setString(2,extended);
+	 virtStmt.setString(3,href);
+	 virtStmt.setString(4,tag);
+	 virtStmt.addBatch();
        } catch ( SQLException sqle ) { sqle.printStackTrace(); }
-    }
+   }
 }

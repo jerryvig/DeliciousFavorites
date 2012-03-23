@@ -23,8 +23,8 @@ import java.util.concurrent.Callable;
 public class StartH2DeliciousSqlite {
     private static Connection conn;
     private static Statement stmt;
-    private static PreparedStatement prepStmt;
     private static PreparedStatement virtStmt;
+    private static PreparedStatement iStmt;
 
     public static void main( String[] args ) {
        startDB();
@@ -61,20 +61,21 @@ public class StartH2DeliciousSqlite {
 	    HttpsURLConnection urlConn = (HttpsURLConnection)(url.openConnection());
 	    Document doc = (new SAXReader()).read( urlConn.getInputStream() );
 	    List<Node> posts = (List<Node>)doc.selectNodes("//post");
-            try {          
-              prepStmt = conn.prepareStatement("INSERT INTO posts VALUES(?,?,?,?,?,?,?,?)"); 
+            try {
+              iStmt = conn.prepareStatement("INSERT INTO posts VALUES(?,?,?,?,?,?,?,?)"); 
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
             try {
-	      virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
+		virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
             final ExecutorService execSvc = Executors.newFixedThreadPool(4);
-            final ArrayList<Callable<Object>> tasks = new ArrayList();            
+            final ArrayList<Callable<Object>> nodeTasks = new ArrayList<Callable<Object>>();
 
 	    for ( Node post : posts ) {
-
-                tasks.add( Executors.callable( new DeliciousPostProcessor(post) ) );
-
+                DeliciousPostProcessor postProc = new DeliciousPostProcessor(post, iStmt, virtStmt);
+                nodeTasks.add(Executors.callable(postProc));
+               
+                /*
 		List<Node> attributes = (List<Node>)(post.selectNodes("@*"));
 		String description = ""; 
 		String href = "";
@@ -143,20 +144,26 @@ public class StartH2DeliciousSqlite {
                   virtStmt.setString(4,tag);
                   virtStmt.addBatch();
                 } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+                */
 	    }
        
-	    try {
-                conn.setAutoCommit(false);
-                prepStmt.executeBatch();
-                virtStmt.executeBatch();
-                conn.setAutoCommit(true);
+            try {
+	       execSvc.invokeAll( nodeTasks );
+               execSvc.shutdown();
+            } catch ( InterruptedException ie ) { ie.printStackTrace(); }
 
-		stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts(tag)");
-		stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts(time)");
-                stmt.executeUpdate("CREATE INDEX posts_desc_idx ON posts(description)");
-                stmt.executeUpdate("CREATE INDEX posts_ext_idx ON posts(extended)");
-                stmt.executeUpdate("CREATE INDEX posts_private_idx ON posts(private)");
-                stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts(shared)");
+	    try {
+               conn.setAutoCommit(false);
+               iStmt.executeBatch();
+               virtStmt.executeBatch();
+               conn.setAutoCommit(true);
+
+	       stmt.executeUpdate("CREATE INDEX posts_tag_idx ON posts(tag)");
+	       stmt.executeUpdate("CREATE INDEX posts_time_idx ON posts(time)");
+               stmt.executeUpdate("CREATE INDEX posts_desc_idx ON posts(description)");
+               stmt.executeUpdate("CREATE INDEX posts_ext_idx ON posts(extended)");
+               stmt.executeUpdate("CREATE INDEX posts_private_idx ON posts(private)");
+               stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts(shared)");
 	    } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	} catch ( IOException ioe ) { ioe.printStackTrace(); }
 	catch ( DocumentException doce ) { doce.printStackTrace(); }
