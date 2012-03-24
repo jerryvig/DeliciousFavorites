@@ -25,6 +25,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class StartH2DeliciousSqlite {
     private static Connection conn;
@@ -70,54 +72,53 @@ public class StartH2DeliciousSqlite {
 		virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
-            final ExecutorService execSvc = Executors.newFixedThreadPool(4);
+            final ExecutorService execSvc = Executors.newFixedThreadPool(1);
             final LinkedList<Callable<Object>> nodeTasks = new LinkedList<Callable<Object>>();
+            //final ArrayBlockingQueue<char> charQ = new ArrayBlockingQueue<char>(5);
 
-            XMLInputFactory xmlif = XMLInputFactory.newInstance();
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection urlConn = (HttpsURLConnection)(url.openConnection());
-	    // Document doc = (new SAXReader()).read( urlConn.getInputStream() );
-            //  List<Node> posts = (List<Node>)doc.selectNodes("//post");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-            String content = "";
-            String s;
-            while( (s=reader.readLine())!=null ) {
-		content += s;
+            InputStreamReader reader = new InputStreamReader(urlConn.getInputStream());
+            char[] buffer5 = new char[2];
+            char[] buffer2 = new char[2];
+            
+            int charCount = 0;
+            int s = 0;
+            while( (s=reader.read(buffer5,0,2)) != -1 ) {
+	      if ( (new String(buffer5)).equals("<p") ) {
+		 String postString = new String( buffer5 ); 
+		 while ( (s=reader.read(buffer2,0,2)) != -1 ) {
+                     postString = postString.concat( new String(buffer2) );
+		     if ( (new String(buffer2)).equals("/>") ) {
+			(new DeliciousPostProcessor(postString, iStmt, virtStmt)));
+                        //System.out.println( postString );
+                        postString = "";
+                        break; 
+                     } 
+                 } 
+	      }
             }
             reader.close();
             
-            int[] startIndices = new int[1001];
-            int[] endIndices = new int[1001];
-            int postCount = 0;            
+            //System.out.println( "lineCount = " + lineCount );
+           
+            /*
             String postString = "";
             boolean addToPostString = false;
 
             for ( int i=0; i<content.length()-5; i++ ) {
-	       if ( content.substring(i,i+5).equals("<post") ) {
-		   startIndices[postCount] = i;
-                   addToPostString = true;
-               }
+	       if ( content.substring(i,i+5).equals("<post") ) addToPostString = true;
                if ( content.substring(i,i+2).equals("/>") ) {
-                   endIndices[postCount] = i+2;
-                   //String postStr = content.substring(startIndices[postCount],endIndices[postCount]);
-                   nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postString, iStmt, virtStmt)));
-                   addToPostString = false;
-                   postCount++;
+                  nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postString, iStmt, virtStmt)));
+                  addToPostString = false;
+                  postString = "";
                }
-               if ( addToPostString ) {
-		   postString += content.substring(i,i+1);
-               }
-            }
-
-            //System.out.println( content );
-	    /*
-            for ( Node post : posts ) {
-                nodeTasks.add(Executors.callable(new DeliciousPostProcessor(post, iStmt, virtStmt)));
-		} */
+               if ( addToPostString ) postString += content.charAt(i);
+	       } */
        
             try {
 	       execSvc.invokeAll( nodeTasks );
-               execSvc.shutdown();
+	       execSvc.shutdown();
 	    } catch ( InterruptedException ie ) { ie.printStackTrace(); }
 
 	    try {

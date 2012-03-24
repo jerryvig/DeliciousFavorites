@@ -1,5 +1,3 @@
-import java.util.List;
-import java.util.LinkedList;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,18 +10,8 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.MalformedURLException;
-import org.dom4j.io.SAXReader;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Node;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Callable;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class StartH2DeliciousSqlite {
@@ -71,55 +59,31 @@ public class StartH2DeliciousSqlite {
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
             final ExecutorService execSvc = Executors.newFixedThreadPool(4);
-            final LinkedList<Callable<Object>> nodeTasks = new LinkedList<Callable<Object>>();
 
-            XMLInputFactory xmlif = XMLInputFactory.newInstance();
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection urlConn = (HttpsURLConnection)(url.openConnection());
-	    // Document doc = (new SAXReader()).read( urlConn.getInputStream() );
-            //  List<Node> posts = (List<Node>)doc.selectNodes("//post");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-            String content = "";
-            String s;
-            while( (s=reader.readLine())!=null ) {
-		content += s;
+            InputStreamReader reader = new InputStreamReader(urlConn.getInputStream());
+            char[] buffer5 = new char[1];
+            char[] buffer2 = new char[1];
+            
+            int charCount = 0;
+            int s = 0;
+            while( (s=reader.read(buffer5,0,1)) != -1 ) {
+	      if ( buffer5[0] == '<' ) {
+		 String postString = new String( buffer5 ); 
+		 while ( (s=reader.read(buffer2,0,1)) != -1 ) {
+                     postString = postString.concat( new String(buffer2) );
+		     if ( buffer2[0] == '>' ) {
+			execSvc.execute(new DeliciousPostProcessor(postString, iStmt, virtStmt));
+                        postString = "";
+                        break; 
+                     }
+                 }
+	      }
             }
             reader.close();
-            
-            int[] startIndices = new int[1001];
-            int[] endIndices = new int[1001];
-            int postCount = 0;            
-            String postString = "";
-            boolean addToPostString = false;
-
-            for ( int i=0; i<content.length()-5; i++ ) {
-	       if ( content.substring(i,i+5).equals("<post") ) {
-		   startIndices[postCount] = i;
-                   addToPostString = true;
-               }
-               if ( content.substring(i,i+2).equals("/>") ) {
-                   endIndices[postCount] = i+2;
-                   String postStr = content.substring(startIndices[postCount],endIndices[postCount]);
-                   nodeTasks.add(Executors.callable(new DeliciousPostProcessor(postStr, iStmt, virtStmt)));
-                   addToPostString = false;
-                   postString = "";
-                   postCount++;
-               }
-               if ( addToPostString ) {
-		   postString += content.substring(i,i+1);
-	       }
-            }
-
-            //System.out.println( content );
-	    /*
-            for ( Node post : posts ) {
-                nodeTasks.add(Executors.callable(new DeliciousPostProcessor(post, iStmt, virtStmt)));
-		} */
-       
-            try {
-	       execSvc.invokeAll( nodeTasks );
-               execSvc.shutdown();
-	    } catch ( InterruptedException ie ) { ie.printStackTrace(); }
+           
+	    execSvc.shutdown();
 
 	    try {
                conn.setAutoCommit(false);
@@ -135,8 +99,6 @@ public class StartH2DeliciousSqlite {
                stmt.executeUpdate("CREATE INDEX posts_shared_idx ON posts(shared)");
 	    } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 	} catch ( IOException ioe ) { ioe.printStackTrace(); }
-	// catch ( DocumentException doce ) { doce.printStackTrace(); }
-        //catch ( XMLStreamException e ) { e.printStackTrace(); }
     }
  
     public static void stopDB() {
