@@ -66,7 +66,6 @@ public class StartH2DeliciousSqlite {
             char[] buffer5 = new char[1];
             char[] buffer2 = new char[1];
             
-            int charCount = 0;
             int s = 0;
             while( (s=reader.read(buffer5,0,1)) != -1 ) {
 	      if ( buffer5[0] == '<' ) {

@@ -1,3 +1,2 @@
 # Module deliciousfavorites
 # RPC service class, partial path of RPC policy file
-com.mktneutral.client.DeliciousFavoriteService, 14FDBF151561C65CEF3161CCB4633FA3.gwt.rpc
