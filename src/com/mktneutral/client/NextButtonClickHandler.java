@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.dom.client.DivElement;
@@ -49,29 +49,23 @@ public class NextButtonClickHandler implements ClickHandler {
 
          prevButton.addStyleName("deliButton");
          nextButton.addStyleName("deliButton");
-         HorizontalPanel hPanel = new HorizontalPanel();
-         hPanel.setSpacing(0);
-         hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
-         hPanel.setWidth("100%");
-         hPanel.add( prevButton );
-         hPanel.add( nextButton );
+         FlowPanel flowPanel = new FlowPanel();
+         flowPanel.add( prevButton );
+         flowPanel.add( nextButton );
 
          flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
          flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
-         flexTable.setWidget(33,0, hPanel );           
+         flexTable.setWidget(33,0, flowPanel );           
      }
      else {
          Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
          nextButton.addStyleName("deliButton");
-         HorizontalPanel hPanel = new HorizontalPanel();
-         hPanel.setSpacing(0);
-         hPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
-         hPanel.setWidth("100%");
-         hPanel.add( nextButton );
+         FlowPanel flowPanel = new FlowPanel();
+         flowPanel.add( nextButton );
 
          flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
          flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
-         flexTable.setWidget(33,0, hPanel ); 
+         flexTable.setWidget(33,0, flowPanel ); 
      }
 
      dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    

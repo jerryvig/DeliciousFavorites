@@ -26,7 +26,6 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       Connection conn = null;
       Statement stmt = null;
       try {
-	  //conn = DriverManager.getConnection("jdbc:h2:tcp://localhost/mem:delicious","sa","");
 	 conn = DriverManager.getConnection("jdbc:sqlite:/mnt/ramdisk/delicious.db");
          stmt = conn.createStatement();
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
