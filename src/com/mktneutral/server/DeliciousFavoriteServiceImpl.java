@@ -8,12 +8,6 @@ import java.util.Date;
 import com.mktneutral.client.DeliciousFavorite;
 import com.mktneutral.client.DeliciousFavoriteService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.mongodb.Mongo;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -26,7 +20,6 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
 
    public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
       try {
-	 //Class.forName("org.h2.Driver");
 	 Class.forName("org.sqlite.JDBC");
       } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
@@ -91,6 +84,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       return favoritesList;
    }
 
+    /*
    public ArrayList<DeliciousFavorite> getFavoritesMongo( String sortColumn, String sortDirection, int startRow ) {
        DB db = null;
        try {
@@ -140,5 +134,5 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
        }
 
        return favoritesList;
-       }
+       } */
 }

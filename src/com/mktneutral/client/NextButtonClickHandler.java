@@ -36,11 +36,11 @@ public class NextButtonClickHandler implements ClickHandler {
        }
      };
      
-     flexTable.setText(1,0,"Description");
-     flexTable.setText(1,1,"Tags");
-     flexTable.setText(1,2,"Shared");
-     flexTable.setText(1,3,"Private");
-     flexTable.setText(1,4,"Date Added");
+     flexTable.setText(2,0,"Description");
+     flexTable.setText(2,1,"Tags");
+     flexTable.setText(2,2,"Shared");
+     flexTable.setText(2,3,"Private");
+     flexTable.setText(2,4,"Date Added");
     
      query.setStartRow( query.getStartRow()+30 );
      if ( query.getStartRow() > 0 ) {
@@ -56,9 +56,9 @@ public class NextButtonClickHandler implements ClickHandler {
          hPanel.add( prevButton );
          hPanel.add( nextButton );
 
-         flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
-         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
-         flexTable.setWidget(32,0, hPanel );           
+         flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
+         flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
+         flexTable.setWidget(33,0, hPanel );           
      }
      else {
          Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
@@ -69,9 +69,9 @@ public class NextButtonClickHandler implements ClickHandler {
          hPanel.setWidth("100%");
          hPanel.add( nextButton );
 
-         flexTable.getFlexCellFormatter().setStyleName(32,0,"footerCell");
-         flexTable.getFlexCellFormatter().setHorizontalAlignment(32,0,HasHorizontalAlignment.ALIGN_CENTER);
-         flexTable.setWidget(32,0, hPanel ); 
+         flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
+         flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
+         flexTable.setWidget(33,0, hPanel ); 
      }
 
      dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
