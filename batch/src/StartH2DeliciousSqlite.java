@@ -32,7 +32,7 @@ public class StartH2DeliciousSqlite {
 	} catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
 	try {
-	    conn = DriverManager.getConnection("jdbc:sqlite:/mnt/ramdisk/delicious.db");
+	    conn = DriverManager.getConnection("jdbc:sqlite:/mnt/BigDrive/gwt-testing/DeliciousFavorites/delicious.db");
 	    stmt = conn.createStatement();
             stmt.executeUpdate("DROP TABLE IF EXISTS posts");
 	    stmt.executeUpdate("CREATE TABLE posts (description TEXT,extended TEXT,hash TEXT,href TEXT,private INTEGER,shared INTEGER,tag TEXT,time TEXT)");
