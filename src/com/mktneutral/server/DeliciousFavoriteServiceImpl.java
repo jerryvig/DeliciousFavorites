@@ -83,6 +83,72 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       return favoritesList;
    }
 
+   public ArrayList<DeliciousFavorite> searchFavorites( String sortColumn, String sortDirection, int startRow, String searchQuery ) {
+      try {
+	 Class.forName("org.sqlite.JDBC");
+      } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
+
+      Connection conn = null;
+      Statement stmt = null;
+      try {
+	 conn = DriverManager.getConnection("jdbc:sqlite:delicious.db");
+         stmt = conn.createStatement();
+      } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      String orderBy = "time";
+      if ( sortColumn.equals("description") ) {
+	  orderBy = "description";
+      }
+      else if ( sortColumn.equals("tags") ) {
+          orderBy = "tag";
+      }
+      else if ( sortColumn.equals("shared") ) {
+          orderBy = "shared";
+      }
+      else if ( sortColumn.equals("private") ) {
+          orderBy = "private";
+      }
+      else if ( sortColumn.equals("time") ) {
+          orderBy = "time";
+      }
+
+      ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
+
+      try {
+        ResultSet rs = stmt.executeQuery("SELECT * FROM posts_fts3 WHERE posts_fts3 MATCH '"+searchQuery+"' ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
+
+        while ( rs.next() ) {
+           String desc = rs.getString(1);
+           String href = rs.getString(4);
+           String tag = rs.getString(7);
+           int shared = rs.getInt(6);
+           int pvt = rs.getInt(5);
+           String sharedString = "";
+           String pvtString = "";
+           if ( shared == 1 ) {
+	      sharedString = "yes";
+           }
+           else {
+              sharedString = "no";
+           }
+           if ( pvt == 1 ) {
+	       pvtString = "yes";
+           }
+           else {
+               pvtString = "no";
+           }
+
+           //Date time = new Date( rs.getDate(9).getTime() );
+           try {
+             Date time = dateFormatter.parse(rs.getString(8));
+             favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
+	   } catch ( ParseException pe ) { pe.printStackTrace(); }
+        }
+      } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      return favoritesList;
+   }
+
     /*
    public ArrayList<DeliciousFavorite> getFavoritesMongo( String sortColumn, String sortDirection, int startRow ) {
        DB db = null;
