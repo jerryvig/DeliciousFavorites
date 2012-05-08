@@ -23,7 +23,7 @@ public class DeliciousFavorites implements EntryPoint {
    //Widget definitions
    private VerticalPanel vertPanel = new VerticalPanel();
    private FlexTable flexTable = new FlexTable();
-   private DeliciousFavoriteQuery query = new DeliciousFavoriteQuery( 0, "time", "desc" );
+   private DeliciousFavoriteQuery query = new DeliciousFavoriteQuery( 0, "time", "desc", "list" );
 
    //Callback definitions
    private DeliciousFavoriteServiceAsync dfSvc = GWT.create(DeliciousFavoriteService.class);
@@ -42,7 +42,7 @@ public class DeliciousFavorites implements EntryPoint {
        searchTextBox.setMaxLength(80);
        FlowPanel searchPanel = new FlowPanel();
        searchPanel.add( searchTextBox );
-       Button searchButton = new Button( "Search", new SearchButtonClickHandler( flexTable, query ) );
+       Button searchButton = new Button( "Search", new SearchButtonClickHandler( flexTable, searchTextBox, query ) );
        searchButton.addStyleName("deliButton");
        searchPanel.add( searchButton );
        flexTable.setWidget(1,0,searchPanel);
@@ -58,7 +58,7 @@ public class DeliciousFavorites implements EntryPoint {
        flexTable.setWidth("100%");
        flexTable.setCellSpacing(0);
         
-       flexTable.addClickHandler( new TableClickHandler( flexTable ) );
+       flexTable.addClickHandler( new TableClickHandler( flexTable, query ) );
        getFavoritesList();
 
        Button nextButton = new Button( "Next 30 >>", new NextButtonClickHandler( flexTable, query ) ); 
@@ -91,6 +91,8 @@ public class DeliciousFavorites implements EntryPoint {
 	     DeliciousFavoritesHelpers.fillFlexTable( flexTable, favsList );     
           }
       };
-      dfSvc.getFavorites( "time", "desc", 0, callback );
+
+      dfSvc.getFavorites( query, callback );
+      //dfSvc.getFavorites( "time", "desc", 0, callback );
    } 
 }

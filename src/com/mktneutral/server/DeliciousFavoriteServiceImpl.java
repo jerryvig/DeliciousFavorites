@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.util.Date;
 import com.mktneutral.client.DeliciousFavorite;
 import com.mktneutral.client.DeliciousFavoriteService;
+import com.mktneutral.client.DeliciousFavoriteQuery;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +19,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");   
    private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yy");
 
-   public ArrayList<DeliciousFavorite> getFavorites( String sortColumn, String sortDirection, int startRow ) {
+   public ArrayList<DeliciousFavorite> getFavorites( DeliciousFavoriteQuery _query ) {
       try {
 	 Class.forName("org.sqlite.JDBC");
       } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
@@ -29,6 +30,10 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
 	 conn = DriverManager.getConnection("jdbc:sqlite:delicious.db");
          stmt = conn.createStatement();
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      String sortColumn = _query.getSortColumn();
+      String sortDirection = _query.getSortDirection();
+      int startRow = _query.getStartRow();
 
       String orderBy = "time";
       if ( sortColumn.equals("description") ) {
@@ -48,7 +53,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       }
 
       ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
-
+ 
       try {
         ResultSet rs = stmt.executeQuery("SELECT * FROM posts ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
         while ( rs.next() ) {
@@ -83,7 +88,8 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       return favoritesList;
    }
 
-   public ArrayList<DeliciousFavorite> searchFavorites( String sortColumn, String sortDirection, int startRow, String searchQuery ) {
+    /*
+   public ArrayList<DeliciousFavorite> searchFavorites( DeliciousFavoriteQuery _query ) {
       try {
 	 Class.forName("org.sqlite.JDBC");
       } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
@@ -152,6 +158,6 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
       return favoritesList;
-   }
+      } */
 
 }

@@ -1,14 +1,20 @@
 package com.mktneutral.client;
 
-public class DeliciousFavoriteQuery {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class DeliciousFavoriteQuery implements IsSerializable {
    private int startRow;
    private String sortColumn;
    private String sortDirection;
+   private String queryType;
 
-   DeliciousFavoriteQuery( int _startRow, String _sortColumn, String _sortDirection ) {
+   DeliciousFavoriteQuery() {}
+
+   DeliciousFavoriteQuery( int _startRow, String _sortColumn, String _sortDirection, String _queryType ) {
       startRow = _startRow;
       sortColumn = _sortColumn;
       sortDirection = _sortDirection;
+      queryType = _queryType;
    }
 
    public int getStartRow() {
@@ -23,6 +29,10 @@ public class DeliciousFavoriteQuery {
        return sortDirection;
    }
 
+   public String getQueryType() {
+       return queryType;
+   }
+
    public void setStartRow( int _startRow ) {
        startRow = _startRow;
    } 
@@ -33,5 +43,9 @@ public class DeliciousFavoriteQuery {
  
    public void setSortDirection( String _sortDirection ) {
        sortDirection = _sortDirection;
+   }
+
+   public void setQueryType( String _queryType ) {
+       queryType = _queryType;
    }
 }

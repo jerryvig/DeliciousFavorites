@@ -21,7 +21,7 @@ public class TableClickHandler implements ClickHandler {
 
    public void onClick( ClickEvent event ) {
        HTMLTable.Cell clickedCell = flexTable.getCellForEvent( event );
-       if ( clickedCell.getRowIndex() == 1 ) {
+       if ( clickedCell.getRowIndex() == 2 ) {
 	  int columnIndex = clickedCell.getCellIndex();
           switch(columnIndex) {
 	    case 0:
@@ -53,11 +53,11 @@ public class TableClickHandler implements ClickHandler {
        }
      };
 
-     flexTable.setText(1,0,"Description");
-     flexTable.setText(1,1,"Tags");
-     flexTable.setText(1,2,"Shared");
-     flexTable.setText(1,3,"Private");
-     flexTable.setText(1,4,"Date Added");
+     flexTable.setText(2,0,"Description");
+     flexTable.setText(2,1,"Tags");
+     flexTable.setText(2,2,"Shared");
+     flexTable.setText(2,3,"Private");
+     flexTable.setText(2,4,"Date Added");
 
      String arrowString = "↑";
      if ( sortDirection.equals("asc") ) {
@@ -70,19 +70,19 @@ public class TableClickHandler implements ClickHandler {
      }
      
      if ( sortColumn.equals("description") ) {
-	 flexTable.setText(1,0,"Description "+arrowString);
+	 flexTable.setText(2,0,"Description "+arrowString);
      }
      else if ( sortColumn.equals("tags") ) {
-          flexTable.setText(1,1,"Tags "+arrowString);
+          flexTable.setText(2,1,"Tags "+arrowString);
      } 
      else if ( sortColumn.equals("shared") ) {
-          flexTable.setText(1,2,"Shared "+arrowString);
+          flexTable.setText(2,2,"Shared "+arrowString);
      }
      else if ( sortColumn.equals("private") ) {
-          flexTable.setText(1,3,"Tags "+arrowString);
+          flexTable.setText(2,3,"Tags "+arrowString);
      }
      else if ( sortColumn.equals("time") ) {
-          flexTable.setText(1,4,"Date Added "+arrowString);
+          flexTable.setText(2,4,"Date Added "+arrowString);
      }
 
      dfSvc.getFavorites( sortColumn, sortDirection, 0, callback );

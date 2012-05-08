@@ -13,11 +13,13 @@ public class TableClickHandler implements ClickHandler {
    private FlexTable flexTable;
    private DeliciousFavoriteServiceAsync dfSvc;
    private String sortDirection = "desc";
+   private DeliciousFavoriteQuery query;
 
-   TableClickHandler( FlexTable _ft ) {
+    TableClickHandler( FlexTable _ft, DeliciousFavoriteQuery _query ) {
        flexTable = _ft;
+       query = _query;
        dfSvc = GWT.create(DeliciousFavoriteService.class);
-   }
+    }
 
    public void onClick( ClickEvent event ) {
        HTMLTable.Cell clickedCell = flexTable.getCellForEvent( event );
@@ -85,6 +87,7 @@ public class TableClickHandler implements ClickHandler {
           flexTable.setText(2,4,"Date Added "+arrowString);
      }
 
-     dfSvc.getFavorites( sortColumn, sortDirection, 0, callback );
+     dfSvc.getFavorites( query, callback ); 
+     //dfSvc.getFavorites( sortColumn, sortDirection, 0, callback );
    }
 }
