@@ -7,6 +7,7 @@ public class DeliciousFavoriteQuery implements IsSerializable {
    private String sortColumn;
    private String sortDirection;
    private String queryType;
+   private String queryString = "";
 
    DeliciousFavoriteQuery() {}
 
@@ -33,6 +34,10 @@ public class DeliciousFavoriteQuery implements IsSerializable {
        return queryType;
    }
 
+   public String getQueryString() {
+       return queryString;
+   } 
+
    public void setStartRow( int _startRow ) {
        startRow = _startRow;
    } 
@@ -48,4 +53,8 @@ public class DeliciousFavoriteQuery implements IsSerializable {
    public void setQueryType( String _queryType ) {
        queryType = _queryType;
    }
+
+   public void setQueryString( String _queryString ) {
+       queryString = _queryString;
+   } 
 }

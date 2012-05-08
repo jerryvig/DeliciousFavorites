@@ -33,6 +33,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
 
       String sortColumn = _query.getSortColumn();
       String sortDirection = _query.getSortDirection();
+      String searchQuery = _query.getQueryString();
       int startRow = _query.getStartRow();
 
       String orderBy = "time";
@@ -55,8 +56,12 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
  
       try {
-        ResultSet rs = stmt.executeQuery("SELECT * FROM posts ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
-        while ( rs.next() ) {
+        ResultSet rs = null;
+
+	if ( _query.getQueryType().equals("list") ) {
+           rs = stmt.executeQuery("SELECT * FROM posts ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
+
+           while ( rs.next() ) {
 	   String desc = rs.getString(1);
            String href = rs.getString(4);
            String tag = rs.getString(7);
@@ -82,7 +87,42 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
              Date time = dateFormatter.parse(rs.getString(8));
              favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
 	   } catch ( ParseException pe ) { pe.printStackTrace(); }
+	   }
         }
+        else if ( _query.getQueryType().equals("search") ) {
+	  orderBy = "description";
+          rs = stmt.executeQuery("SELECT * FROM posts_fts3 WHERE posts_fts3 MATCH '"+searchQuery+"' ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
+
+          while ( rs.next() ) {
+           String desc = rs.getString(1);
+           String href = rs.getString(3);
+           String tag = rs.getString(4);
+           int shared = 0;
+           int pvt = 0;
+           String sharedString = "";
+           String pvtString = "";
+           if ( shared == 1 ) {
+	      sharedString = "yes";
+           }
+           else {
+              sharedString = "no";
+           }
+           if ( pvt == 1 ) {
+	       pvtString = "yes";
+           }
+           else {
+               pvtString = "no";
+           }
+
+           //Date time = new Date( rs.getDate(9).getTime() );
+            try {
+	       //Date time = dateFormatter.parse(rs.getString(8));
+	     Date time = new Date();
+             favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
+	    } catch ( Exception pe ) { pe.printStackTrace(); }
+	  }   
+
+        }       
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
       return favoritesList;

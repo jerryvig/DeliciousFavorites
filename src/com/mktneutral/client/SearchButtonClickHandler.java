@@ -44,10 +44,9 @@ public class SearchButtonClickHandler implements ClickHandler {
      //     query.setStartRow( query.getStartRow()+30 );
      query.setStartRow( 0 );
      query.setQueryType("search");
+     query.setQueryString( textBox.getValue() );
            
      drawNextPreviousButtons();
-
-     Window.alert( textBox.getValue() );
 
      dfSvc.getFavorites( query, callback );    
    }
