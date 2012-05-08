@@ -41,6 +41,9 @@ public class DeliciousFavorites implements EntryPoint {
        TextBox searchTextBox = new TextBox();
        searchTextBox.setVisibleLength(40);
        searchTextBox.setMaxLength(80);
+       searchTextBox.addStyleName("searchTextBox");
+       searchTextBox.addKeyDownHandler( new EnterKeyDownHandler( flexTable, searchTextBox, query ) );
+
        FlowPanel searchPanel = new FlowPanel();
        searchPanel.add( searchTextBox );
        Button searchButton = new Button( "Search", new SearchButtonClickHandler( flexTable, searchTextBox, query ) );
@@ -73,7 +76,7 @@ public class DeliciousFavorites implements EntryPoint {
        vertPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
 
        FlowPanel copyPanel = new FlowPanel();
-       copyPanel.add( new InlineHTML("<br><strong>Copyright &copy; 2012 MktNeutral.com</strong><br>") );       
+       copyPanel.add( new InlineHTML("<br><strong style='color:#007FFF;'>Copyright &copy; 2012 MktNeutral.com</strong><br>") );       
        
        RootPanel.get("mainPanel").add( vertPanel );
        RootPanel.get("mainPanel").add( copyPanel );

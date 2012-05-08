@@ -79,3 +79,8 @@ h1 {
   border-color: #D7DDE8;
   color: #007FFF;
 }
+
+.searchTextBox {
+  font-weight: bold;
+  color: #007FFF;
+}
