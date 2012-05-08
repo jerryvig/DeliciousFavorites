@@ -28,10 +28,11 @@ public class DeliciousFavorites implements EntryPoint {
    //Callback definitions
    private DeliciousFavoriteServiceAsync dfSvc = GWT.create(DeliciousFavoriteService.class);
 
-   public void onModuleLoad() {     
+   public void onModuleLoad() {
+       InlineHTML iHtml = new InlineHTML("<strong style='font-size:18pt;'>Jerry's Delicious Bookmarks</strong>");
        flexTable.getCellFormatter().addStyleName(0,0,"footerCell");
        flexTable.getFlexCellFormatter().setColSpan(0,0,5);
-       flexTable.setText(0,0,"Jerry's Delicious Bookmarks");
+       flexTable.setWidget(0,0,iHtml);
 
        flexTable.getCellFormatter().addStyleName(1,0,"footerCell");
        flexTable.getFlexCellFormatter().setColSpan(1,0,5);
