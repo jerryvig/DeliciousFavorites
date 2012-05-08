@@ -95,7 +95,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
          stmt = conn.createStatement();
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
-      String orderBy = "time";
+      String orderBy = "description";
       if ( sortColumn.equals("description") ) {
 	  orderBy = "description";
       }
@@ -111,18 +111,22 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       else if ( sortColumn.equals("time") ) {
           orderBy = "time";
       }
+       
+      orderBy = "description";
 
       ArrayList<DeliciousFavorite> favoritesList = new ArrayList<DeliciousFavorite>();
 
       try {
-        ResultSet rs = stmt.executeQuery("SELECT * FROM posts_fts3 WHERE posts_fts3 MATCH '"+searchQuery+"' ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
+	ResultSet rs = stmt.executeQuery("SELECT * FROM posts_fts3 WHERE posts_fts3 MATCH '"+searchQuery+"' ORDER BY "+orderBy+" "+sortDirection.toUpperCase()+" LIMIT 30 OFFSET "+Integer.toString(startRow));
+
+        //ResultSet rs = stmt.executeQuery("SELECT * FROM posts_fts3 WHERE posts_fts3 MATCH '"+searchQuery+"' LIMIT 30");
 
         while ( rs.next() ) {
            String desc = rs.getString(1);
-           String href = rs.getString(4);
-           String tag = rs.getString(7);
-           int shared = rs.getInt(6);
-           int pvt = rs.getInt(5);
+           String href = rs.getString(3);
+           String tag = rs.getString(4);
+           int shared = 0;
+           int pvt = 0;
            String sharedString = "";
            String pvtString = "";
            if ( shared == 1 ) {
@@ -140,64 +144,14 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
 
            //Date time = new Date( rs.getDate(9).getTime() );
            try {
-             Date time = dateFormatter.parse(rs.getString(8));
+	       //Date time = dateFormatter.parse(rs.getString(8));
+	     Date time = new Date();
              favoritesList.add( new DeliciousFavorite( desc, href, tag, sharedString, pvtString, dateFmt.format(time) ) );
-	   } catch ( ParseException pe ) { pe.printStackTrace(); }
+	   } catch ( Exception pe ) { pe.printStackTrace(); }
         }
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
       return favoritesList;
    }
 
-    /*
-   public ArrayList<DeliciousFavorite> getFavoritesMongo( String sortColumn, String sortDirection, int startRow ) {
-       DB db = null;
-       try {
-          db = (new Mongo("localhost")).getDB("delicious");
-       } catch ( UnknownHostException uhe ) { uhe.printStackTrace(); }
-
-       ArrayList<DeliciousFavorite> favoritesList = new ArrayList();
-      
-       BasicDBObject sortObj = new BasicDBObject();
-       BasicDBObject gtObj = new BasicDBObject();
-       gtObj.put("$gt","0");
-       BasicDBObject findObj = new BasicDBObject();
-
-       int sortDirectionInt = 1;
-       if ( sortDirection.equals("desc") ) sortDirectionInt = -1;
-
-       if ( sortColumn.equals("description") ) {
-          sortObj.put("description",sortDirectionInt);
-          findObj.put("description",gtObj);          
-       }
-       else if ( sortColumn.equals("tags") ) {
-	  sortObj.put("tag",sortDirectionInt);
-          findObj.put("tag",gtObj); 
-       }
-       else if ( sortColumn.equals("shared") ) {
-	  sortObj.put("shared",sortDirectionInt);
-          findObj.put("shared",gtObj);
-       }
-       else if ( sortColumn.equals("private") ) {
-          sortObj.put("private",sortDirectionInt);
-          findObj.put("private",gtObj);
-       }
-       else if ( sortColumn.equals("time") ) {
-          sortObj.put("time",sortDirectionInt);
-       }
-      
-       DBCursor cur = db.getCollection("posts").find( findObj ).sort( sortObj ).skip(startRow).limit(30);
-
-       while ( cur.hasNext() ) {
-	  DBObject nextObj = cur.next();
-          String dateString = nextObj.get("time").toString().substring(0,9);
-          try {
-            Date dateValue = dateFormatter.parse( dateString );
-            String outDateString = dateFmt.format( dateValue );
-            favoritesList.add( new DeliciousFavorite( nextObj.get("description").toString(), nextObj.get("href").toString(), nextObj.get("tag").toString(), nextObj.get("shared").toString(), nextObj.get("private").toString(), outDateString ) );
-	  } catch ( ParseException pe ) {}
-       }
-
-       return favoritesList;
-       } */
 }

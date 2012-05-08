@@ -38,11 +38,12 @@ public class SearchButtonClickHandler implements ClickHandler {
      flexTable.setText(2,3,"Private");
      flexTable.setText(2,4,"Date Added");
     
-     query.setStartRow( query.getStartRow()+30 );
+     //     query.setStartRow( query.getStartRow()+30 );
+     query.setStartRow( 0 );
            
      drawNextPreviousButtons();
 
-     dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
+     dfSvc.searchFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), "ytz", callback );    
    }
 
    public void drawNextPreviousButtons( ) {

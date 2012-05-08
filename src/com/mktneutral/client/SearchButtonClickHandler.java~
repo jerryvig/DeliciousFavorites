@@ -11,12 +11,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
-public class NextButtonClickHandler implements ClickHandler {
+public class SearchButtonClickHandler implements ClickHandler {
    private FlexTable flexTable;
    private DeliciousFavoriteServiceAsync dfSvc;
    private DeliciousFavoriteQuery query;
    
-    NextButtonClickHandler( FlexTable _ft, DeliciousFavoriteQuery _query ) {
+   SearchButtonClickHandler( FlexTable _ft, DeliciousFavoriteQuery _query ) {
        flexTable = _ft;
        query = _query;
        dfSvc = GWT.create(DeliciousFavoriteService.class);
@@ -38,11 +38,12 @@ public class NextButtonClickHandler implements ClickHandler {
      flexTable.setText(2,3,"Private");
      flexTable.setText(2,4,"Date Added");
     
-     query.setStartRow( query.getStartRow()+30 );
+     //     query.setStartRow( query.getStartRow()+30 );
+     query.setStartRow( 0 );
            
      drawNextPreviousButtons();
 
-     dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
+     dfSvc.searchFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), "ytz", callback );    
    }
 
    public void drawNextPreviousButtons( ) {

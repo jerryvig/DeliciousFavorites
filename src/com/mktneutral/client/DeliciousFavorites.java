@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.core.client.EntryPoint;
@@ -40,11 +41,8 @@ public class DeliciousFavorites implements EntryPoint {
        searchTextBox.setVisibleLength(40);
        searchTextBox.setMaxLength(80);
        FlowPanel searchPanel = new FlowPanel();
-       //searchPanel.setSpacing(0);
-       //searchPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
-       //searchPanel.setWidth("100%");
        searchPanel.add( searchTextBox );
-       Button searchButton = new Button("Search");
+       Button searchButton = new Button( "Search", new SearchButtonClickHandler( flexTable, query ) );
        searchButton.addStyleName("deliButton");
        searchPanel.add( searchButton );
        flexTable.setWidget(1,0,searchPanel);
@@ -72,7 +70,12 @@ public class DeliciousFavorites implements EntryPoint {
 
        vertPanel.add( flexTable );
        vertPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );
-       RootPanel.get("mainPanel").add( vertPanel );              
+
+       FlowPanel copyPanel = new FlowPanel();
+       copyPanel.add( new InlineHTML("<br><strong>Copyright &copy; 2012 MktNeutral.com</strong><br>") );       
+       
+       RootPanel.get("mainPanel").add( vertPanel );
+       RootPanel.get("mainPanel").add( copyPanel );
    }
 
    private void getFavoritesList() {
