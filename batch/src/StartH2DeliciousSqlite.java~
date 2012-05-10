@@ -19,7 +19,7 @@ public class StartH2DeliciousSqlite {
     private static Statement stmt;
     private static PreparedStatement virtStmt;
     private static PreparedStatement iStmt;
-    private static final THREAD_POOL_SIZE = 4;
+    private static final int THREAD_POOL_SIZE = 4;
 
     public static void main( String[] args ) {
        startDB();

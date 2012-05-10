@@ -20,6 +20,8 @@ public class StartH2DeliciousSqlite {
     private static PreparedStatement virtStmt;
     private static PreparedStatement iStmt;
     private static final int THREAD_POOL_SIZE = 4;
+    private static final String NOMBRE = "agentq314";
+    private static final String CONTRASENA = "dk87nup4841";
 
     public static void main( String[] args ) {
        startDB();
@@ -46,9 +48,7 @@ public class StartH2DeliciousSqlite {
 	try {
 	    Authenticator.setDefault(new Authenticator() {
 		    public PasswordAuthentication getPasswordAuthentication() {
-			String username = "agentq314";
-			String password = "dk87nup4841";
-			return new PasswordAuthentication(username,password.toCharArray());
+			return new PasswordAuthentication(NOMBRE,CONTRASENA.toCharArray());
 		    }
 	    });
 
