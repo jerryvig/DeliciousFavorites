@@ -19,6 +19,7 @@ public class StartH2DeliciousSqlite {
     private static Statement stmt;
     private static PreparedStatement virtStmt;
     private static PreparedStatement iStmt;
+    private static final int THREAD_POOL_SIZE = 4;
 
     public static void main( String[] args ) {
        startDB();
@@ -58,7 +59,7 @@ public class StartH2DeliciousSqlite {
 		virtStmt = conn.prepareStatement("INSERT INTO posts_fts3 VALUES(?,?,?,?)");
             } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
-            final ExecutorService execSvc = Executors.newFixedThreadPool(4);
+            final ExecutorService execSvc = Executors.newFixedThreadPool( THREAD_POOL_SIZE );
 
 	    URL url = new URL("https://agentq314:dk87nup4841@api.del.icio.us/v1/posts/all");
 	    HttpsURLConnection urlConn = (HttpsURLConnection)(url.openConnection());
