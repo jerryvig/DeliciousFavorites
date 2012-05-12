@@ -42,7 +42,7 @@ public class NextButtonClickHandler implements ClickHandler {
            
      drawNextPreviousButtons();
 
-     dfSvc.getFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), callback );    
+     dfSvc.getFavorites( query, callback );    
    }
 
    public void drawNextPreviousButtons( ) {

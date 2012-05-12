@@ -10,14 +10,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class SearchButtonClickHandler implements ClickHandler {
    private FlexTable flexTable;
    private DeliciousFavoriteServiceAsync dfSvc;
    private DeliciousFavoriteQuery query;
-   
-   SearchButtonClickHandler( FlexTable _ft, DeliciousFavoriteQuery _query ) {
+   private TextBox textBox;
+
+   SearchButtonClickHandler( FlexTable _ft, TextBox _textBox, DeliciousFavoriteQuery _query ) {
        flexTable = _ft;
+       textBox = _textBox;
        query = _query;
        dfSvc = GWT.create(DeliciousFavoriteService.class);
    }
@@ -40,10 +43,12 @@ public class SearchButtonClickHandler implements ClickHandler {
     
      //     query.setStartRow( query.getStartRow()+30 );
      query.setStartRow( 0 );
+     query.setQueryType("search");
+     query.setQueryString( textBox.getValue() );
            
      drawNextPreviousButtons();
 
-     dfSvc.searchFavorites( query.getSortColumn(), query.getSortDirection(), query.getStartRow(), "ytz", callback );    
+     dfSvc.getFavorites( query, callback );    
    }
 
    public void drawNextPreviousButtons( ) {

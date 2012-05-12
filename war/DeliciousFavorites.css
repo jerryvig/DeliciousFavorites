@@ -71,13 +71,20 @@ h1 {
 }
 
 .deliButton {
-  background-color: #D7DDE8;
+  background-color: #FFFFFF;
   font-size: 14pt;
   font-weight: 900;
   font-family: "Arial";
   border: 1px solid;
   border-color: #D7DDE8;
   color: #007FFF;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+}
+
+.deliButton:hover {
+  background-color: #D7DDE8;
+  color: #007FFF;  
 }
 
 .searchTextBox {

@@ -1,0 +1,31 @@
+package com.mktneutral.client;
+
+import java.util.ArrayList;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Button;
+
+public class SearchButtonFocusHandler implements FocusHandler {
+    private Button searchButton;
+
+   SearchButtonFocusHandler( Button searchButton ) {
+       this.searchButton = searchButton;
+   }
+
+   public void onFocus( FocusEvent event ) {
+     AsyncCallback<ArrayList<DeliciousFavorite>> callback = new AsyncCallback<ArrayList<DeliciousFavorite>>() {
+       public void onFailure( Throwable caught ) {
+	  Window.alert( caught.getMessage() );
+       }
+       public void onSuccess( ArrayList<DeliciousFavorite> favsList ) {
+ 
+       }
+     };
+     Window.alert("you hovered the button");
+     searchButton.setStyleName("hoverButton");
+   }
+}

@@ -47,7 +47,7 @@ public class DeliciousFavorites implements EntryPoint {
        FlowPanel searchPanel = new FlowPanel();
        searchPanel.add( searchTextBox );
        Button searchButton = new Button( "Search", new SearchButtonClickHandler( flexTable, searchTextBox, query ) );
-       searchButton.addStyleName("deliButton");
+       searchButton.setStyleName("deliButton");
        searchPanel.add( searchButton );
        flexTable.setWidget(1,0,searchPanel);
       
@@ -66,7 +66,7 @@ public class DeliciousFavorites implements EntryPoint {
        getFavoritesList();
 
        Button nextButton = new Button( "Next 30 >>", new NextButtonClickHandler( flexTable, query ) ); 
-       nextButton.addStyleName("deliButton");
+       nextButton.setStyleName("deliButton");
        flexTable.setWidget(33,0,nextButton);
 
        flexTable.getCellFormatter().addStyleName(33,0,"footerCell");
