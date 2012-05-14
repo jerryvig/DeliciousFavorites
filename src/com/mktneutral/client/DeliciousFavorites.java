@@ -30,7 +30,6 @@ public class DeliciousFavorites implements EntryPoint {
 
    public void onModuleLoad() {
        InlineHTML iHtml = new InlineHTML("<strong style='font-size:18pt;'>Jerry's Delicious Bookmarks</strong>");
-       flexTable.setStyleName("flexTable");
        flexTable.getCellFormatter().addStyleName(0,0,"footerCell");
        flexTable.getFlexCellFormatter().setColSpan(0,0,5);
        flexTable.setWidget(0,0,iHtml);
@@ -71,7 +70,9 @@ public class DeliciousFavorites implements EntryPoint {
        flexTable.setWidget(33,0,nextButton);
 
        flexTable.getCellFormatter().addStyleName(33,0,"footerCell");
-       flexTable.getFlexCellFormatter().setColSpan(33,0,5);       
+       flexTable.getFlexCellFormatter().setColSpan(33,0,5);
+       flexTable.getCellFormatter().addStyleName(33,0,"roundedBottom");
+       flexTable.getCellFormatter().addStyleName(0,0,"roundedTop");
 
        vertPanel.add( flexTable );
        vertPanel.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_CENTER );

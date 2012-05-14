@@ -30,7 +30,7 @@ public class DeliciousFavorites implements EntryPoint {
 
    public void onModuleLoad() {
        InlineHTML iHtml = new InlineHTML("<strong style='font-size:18pt;'>Jerry's Delicious Bookmarks</strong>");
-       flexTable.setStyleName("
+       flexTable.setStyleName("flexTable");
        flexTable.getCellFormatter().addStyleName(0,0,"footerCell");
        flexTable.getFlexCellFormatter().setColSpan(0,0,5);
        flexTable.setWidget(0,0,iHtml);
