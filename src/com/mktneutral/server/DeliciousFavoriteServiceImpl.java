@@ -27,7 +27,7 @@ public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implement
       Connection conn = null;
       Statement stmt = null;
       try {
-	 conn = DriverManager.getConnection("jdbc:sqlite:delicious.db");
+	 conn = DriverManager.getConnection("jdbc:sqlite:webapps/DeliciousFavorites/WEB-INF/delicious.db");
          stmt = conn.createStatement();
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
 
