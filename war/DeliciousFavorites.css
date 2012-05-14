@@ -90,4 +90,6 @@ h1 {
 .searchTextBox {
   font-weight: bold;
   color: #007FFF;
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
 }
