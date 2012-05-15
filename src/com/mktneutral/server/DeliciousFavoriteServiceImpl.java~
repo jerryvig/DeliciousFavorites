@@ -14,22 +14,34 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.sqlite.SQLiteConfig;
 
 public class DeliciousFavoriteServiceImpl extends RemoteServiceServlet implements DeliciousFavoriteService {
    private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");   
    private SimpleDateFormat dateFmt = new SimpleDateFormat("MM/dd/yy");
 
-   public ArrayList<DeliciousFavorite> getFavorites( DeliciousFavoriteQuery _query ) {
+   public ArrayList<DeliciousFavorite> getFavorites( DeliciousFavoriteQuery _query ) throws SQLException {
+      System.setProperty("sqlite.purejava", "true");
       try {
 	 Class.forName("org.sqlite.JDBC");
       } catch ( ClassNotFoundException cnfe ) { cnfe.printStackTrace(); }
 
+      SQLiteConfig config = new SQLiteConfig();
+      config.setReadOnly(true);   
+      config.setSharedCache(true);
+      config.enableFullSync(true);
+      // config.enableRecursiveTriggers(true);
+
       Connection conn = null;
       Statement stmt = null;
       try {
-	 conn = DriverManager.getConnection("jdbc:sqlite:delicious.db");
+	  //conn = DriverManager.getConnection("jdbc:sqlite:WEB-INF/delicious.db",config.toProperties());
+	 conn = config.createConnection("jdbc:sqlite:");
          stmt = conn.createStatement();
+    
       } catch ( SQLException sqle ) { sqle.printStackTrace(); }
+
+      stmt.executeUpdate("restore from WEB-INF/delicious.db");
 
       String sortColumn = _query.getSortColumn();
       String sortDirection = _query.getSortDirection();
