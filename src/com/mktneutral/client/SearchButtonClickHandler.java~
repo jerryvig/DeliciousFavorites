@@ -56,8 +56,8 @@ public class SearchButtonClickHandler implements ClickHandler {
 	 Button prevButton = new Button("<< Prev 30", new PrevButtonClickHandler( flexTable, query ));
          Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
 
-         prevButton.addStyleName("deliButton");
-         nextButton.addStyleName("deliButton");
+         prevButton.setStyleName("deliButton");
+         nextButton.setStyleName("deliButton");
          FlowPanel flowPanel = new FlowPanel();
          flowPanel.add( prevButton );
          flowPanel.add( nextButton );
@@ -68,7 +68,7 @@ public class SearchButtonClickHandler implements ClickHandler {
      }
      else {
          Button nextButton = new Button("Next 30 >>", new NextButtonClickHandler( flexTable, query ));
-         nextButton.addStyleName("deliButton");
+         nextButton.setStyleName("deliButton");
          FlowPanel flowPanel = new FlowPanel();
          flowPanel.add( nextButton );
 

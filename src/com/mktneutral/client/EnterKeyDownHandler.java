@@ -69,6 +69,7 @@ public class EnterKeyDownHandler implements KeyDownHandler {
          flowPanel.add( nextButton );
 
          flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
+         flexTable.getFlexCellFormatter().addStyleName(33,0,"roundedBottom");
          flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
          flexTable.setWidget(33,0, flowPanel );           
      }
@@ -79,6 +80,7 @@ public class EnterKeyDownHandler implements KeyDownHandler {
          flowPanel.add( nextButton );
 
          flexTable.getFlexCellFormatter().setStyleName(33,0,"footerCell");
+         flexTable.getFlexCellFormatter().addStyleName(33,0,"roundedBottom");
          flexTable.getFlexCellFormatter().setHorizontalAlignment(33,0,HasHorizontalAlignment.ALIGN_CENTER);
          flexTable.setWidget(33,0, flowPanel ); 
      }
